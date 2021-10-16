@@ -6,6 +6,7 @@ import (
 	"path/filepath"
 	"sync"
 	"text/template"
+	"github.com/sasakiyudai/websocket-chat/room"
 )
 
 type templateHandler struct {
@@ -23,7 +24,10 @@ func (t *templateHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 }
 
 func main() {
+	r := room.NewRoom()
 	http.Handle("/", &templateHandler{filename: "chat.html"})
+	http.Handle("/room", r)
+	go r.Run()
 	if err := http.ListenAndServe(":8080", nil); err != nil {
 		log.Fatal("ListenAndServe:", err)
 	}
