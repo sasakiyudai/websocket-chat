@@ -1,14 +1,16 @@
-BINARY_NAME=websocket-chat
+NAME=websocket-chat
 
 build:
-	go build -o ${BINARY_NAME} main.go
+	go build -o ${NAME} main.go
 
 run: build
-	./${BINARY_NAME}
+	./${NAME}
 
 test:
 	cd trace && go test -cover
 
 clean:
 	go clean
-	rm ${BINARY_NAME}
+	rm ${NAME}
+
+.PHONY: build run test clean
