@@ -32,9 +32,9 @@
 			});
 
 			if (!window["WebSocket"]) {
-				alert("Error: WebSocket is NOT allowed");
+				alert("Error: WebSocket is NOT supported");
 			} else {
-				socket = new WebSocket("ws://localhost:8080/room");
+				socket = new WebSocket("ws://{{.Host}}/room");
 				socket.onclose = function(e) {
 					alert("connection ended");
 				}

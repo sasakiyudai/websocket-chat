@@ -6,7 +6,8 @@ build:
 run: build
 	./${BINARY_NAME}
 
-build_and_run: build run
+test:
+	cd trace && go test -cover
 
 clean:
 	go clean
