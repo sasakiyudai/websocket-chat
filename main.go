@@ -4,13 +4,16 @@ import (
 	"flag"
 	"log"
 	"net/http"
-	// "os"
+	"os"
 	"path/filepath"
 	"sync"
 	"text/template"
 
+	"github.com/stretchr/gomniauth"
+
+	"github.com/sasakiyudai/websocket-chat/auth"
 	"github.com/sasakiyudai/websocket-chat/room"
-	// "github.com/sasakiyudai/websocket-chat/trace"
+	"github.com/sasakiyudai/websocket-chat/trace"
 )
 
 type templateHandler struct {
@@ -29,10 +32,17 @@ func (t *templateHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 func main() {
 	var addr = flag.String("addr", ":8080", "address of app")
+	var f = flag.Bool("f", false, "trace will be displaied")
 	flag.Parse()
+	// OAuth
+
 	r := room.NewRoom()
-	// r.Tracer = trace.New(os.Stdout)
-	http.Handle("/", &templateHandler{filename: "chat.html"})
+	if *f == true {
+		r.Tracer = trace.New(os.Stdout)
+	}
+	http.Handle("/chat", auth.MustAuth(&templateHandler{filename: "chat.html"}))
+	http.Handle("/login", &templateHandler{filename: "login.html"})
+	http.HandleFunc("/auth/", auth.LoginHandler)
 	http.Handle("/room", r)
 	go r.Run()
 	log.Println("web server started on", *addr)
