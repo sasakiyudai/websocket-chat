@@ -2,6 +2,7 @@ package main
 
 import (
 	"flag"
+	"fmt"
 	"log"
 	"net/http"
 	"os"
@@ -10,11 +11,23 @@ import (
 	"text/template"
 
 	"github.com/stretchr/gomniauth"
+	"github.com/stretchr/gomniauth/providers/facebook"
+	"github.com/stretchr/gomniauth/providers/github"
+	"github.com/stretchr/gomniauth/providers/google"
+	"github.com/stretchr/signature"
+	"github.com/joho/godotenv"
 
 	"github.com/sasakiyudai/websocket-chat/auth"
 	"github.com/sasakiyudai/websocket-chat/room"
 	"github.com/sasakiyudai/websocket-chat/trace"
 )
+
+func init() {
+	err := godotenv.Load(".env")
+	if err != nil {
+		fmt.Printf(".env: %v", err)
+	}	
+}
 
 type templateHandler struct {
 	once     sync.Once
@@ -35,7 +48,12 @@ func main() {
 	var f = flag.Bool("f", false, "trace will be displaied")
 	flag.Parse()
 	// OAuth
-
+	gomniauth.SetSecurityKey(signature.RandomKey(64))
+	gomniauth.WithProviders(
+		facebook.New(os.Getenv("FACEBOOK_API_CLIENT_ID"), os.Getenv("FACEBOOK_API_SECRET_KEY"), "http://localhost:8080/auth/callback/facebook"),
+		google.New(os.Getenv("GOOGLE_API_CLIENT_ID"), os.Getenv("GOOGLE_API_SECRET_KEY"), "http://localhost:8080/auth/callback/google"),
+		github.New(os.Getenv("GITHUB_API_CLIENT_ID"), os.Getenv("GITHUB_API_SECRET_KEY"), "http://localhost:8080/auth/callback/github"),
+	)
 	r := room.NewRoom()
 	if *f == true {
 		r.Tracer = trace.New(os.Stdout)
