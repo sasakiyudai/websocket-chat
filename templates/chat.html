@@ -27,7 +27,7 @@
 					alert("Error: WebSocket connection doesn't exist");
 					return false;
 				}
-				socket.send(msgBox.val());
+				socket.send(JSON.stringify({"Message": msgBox.val()}));
 				msgBox.val("");
 				return false;
 			});
@@ -40,7 +40,14 @@
 					alert("connection ended");
 				}
 				socket.onmessage = function(e) {
-					messages.append($("<li>").text(e.data));
+					var msg = JSON.parse(e.data);
+					messages.append(
+						$("<li>").append(
+							$("<strong>").text(msg.Name + ": "),
+							$("<span>").text(msg.Message),
+							$("<muted>").text(msg.When)
+						)
+					);
 				}
 			}
 		})
