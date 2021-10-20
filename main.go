@@ -61,7 +61,7 @@ func main() {
 		google.New(os.Getenv("GOOGLE_API_CLIENT_ID"), os.Getenv("GOOGLE_API_SECRET_KEY"), "http://localhost:8080/auth/callback/google"),
 		github.New(os.Getenv("GITHUB_API_CLIENT_ID"), os.Getenv("GITHUB_API_SECRET_KEY"), "http://localhost:8080/auth/callback/github"),
 	)
-	r := room.NewRoom(room.UseAuthAvatar)
+	r := room.NewRoom(room.UseGravatar)
 	if *f == true {
 		r.Tracer = trace.New(os.Stdout)
 	}
