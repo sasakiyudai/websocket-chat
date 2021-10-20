@@ -25,6 +25,18 @@ type room struct {
 	leave   chan *client
 	clients map[*client]bool
 	Tracer  trace.Tracer
+	avatar  Avatar
+}
+
+func NewRoom(avatar Avatar) *room {
+	return &room{
+		forward: make(chan *message),
+		join:    make(chan *client),
+		leave:   make(chan *client),
+		clients: make(map[*client]bool),
+		Tracer:  trace.Off(),
+		avatar:	 avatar,
+	}
 }
 
 func (r *room) Run() {
@@ -52,16 +64,6 @@ func (r *room) Run() {
 				}
 			}
 		}
-	}
-}
-
-func NewRoom() *room {
-	return &room{
-		forward: make(chan *message),
-		join:    make(chan *client),
-		leave:   make(chan *client),
-		clients: make(map[*client]bool),
-		Tracer:  trace.Off(),
 	}
 }
 

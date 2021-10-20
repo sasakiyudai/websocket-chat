@@ -8,6 +8,7 @@ run: build
 
 test:
 	cd trace && go test -cover
+	cd room && go test -cover
 
 clean:
 	go clean
